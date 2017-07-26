@@ -1,0 +1,377 @@
+<!--
+  Reduxsacue from https://github.com/skellock/reduxsauce
+  Adapted to Polymer usage
+  -->
+
+<script src="../../node_modules/ramda/dist/ramda.js"></script>
+<script src="../../node_modules/seamless-immutable/seamless-immutable.production.min.js"></script>
+<script>
+  /**
+    * Due to sintax conflict with Immutable, `update` methods will be replaced locally by `upgrade`, keeping CRUD sintax to end user
+  **/
+  (function () {
+    'use strict';
+
+    ////////////////////////////
+    ///////  CREATE INITIAL STATE
+    ////////////////////////////
+    const getDefaultState = action => {
+      switch(action) {
+        case 'get':
+          return {
+            fetching: false,
+            error: null,
+            results: [],
+          }
+        case 'getOne':
+          return {
+            fetching: false,
+            error: null,
+            result: null
+          }
+        case 'create':
+        case 'update':
+        case 'remove':
+          return {
+            fetching: false,
+            error: null,
+            success: false,
+          }
+      }
+
+      return {};
+    }
+    /**
+      Creates an immutable state with default configuration for defaultActions: get, getOne, create, update, remove
+      @param {object} - Object with custom state
+      @param {object} config - Configuration for default actions
+      @return {object} - An immutable state with merged custom an default properties
+    */
+    const createState = (customState, defaultConfig) => {
+      const defaultActionsObj = {};
+      if(defaultConfig.get) {
+        Object.assign(defaultActionsObj, { get: getDefaultState('get')})
+      }
+      if(defaultConfig.getOne) {
+        Object.assign(defaultActionsObj, { getOne: getDefaultState('getOne')})
+      }
+      if(defaultConfig.create) {
+        Object.assign(defaultActionsObj, { create: getDefaultState('create')})
+      }
+      if(defaultConfig.update) {
+        Object.assign(defaultActionsObj, { upgrade: getDefaultState('update')})
+      }
+      if(defaultConfig.remove) {
+        Object.assign(defaultActionsObj, { remove: getDefaultState('remove')})
+      }
+      
+      return Immutable(R.merge(customState, defaultActionsObj))
+    }
+    
+    ////////////////////////////
+    ///////  CREATE TYPES
+    ////////////////////////////
+
+    /**
+      DRY define your types object from a string
+      @param {string} config - String with Action types
+      @param {object} options - Optional. // See more at https://github.com/skellock/reduxsauce
+      @return {object} A types object.
+    */
+    const createTypes = (types, options) => {
+      if (R.isNil(types)) throw new Error('valid types are required')
+
+      const { prefix = '' } = options
+
+      return R.pipe(
+        R.trim,
+        R.split(/\s/),
+        R.map(R.pipe(R.trim)),
+        R.without([null, '']),
+        R.map((x) => [x, prefix + x]),
+        R.fromPairs
+      )(types)
+    }
+
+    ////////////////////////////
+    ///////  CREATE ACTIONS
+    ////////////////////////////
+
+    // matches on capital letters (except at the start & end of the string)
+    const RX_CAPS = /(?!^)([A-Z])/g
+
+    // converts a camelCaseWord into a SCREAMING_SNAKE_CASE word
+    const camelToScreamingSnake = R.pipe(
+      R.replace(RX_CAPS, '_$1'),
+      R.toUpper
+    )
+
+    // Creates an object with default cycle actions, which include: request, success, failure, reset
+    const getDefaultCycle = action => {
+      return {
+        [`${action}Request`]: true,
+        [`${action}Success`]: true,
+        [`${action}Failure`]: true,
+        [`${action}Reset`]: true,
+      }
+    }
+
+    // Get types from default actions
+    const defaultTypes = ({ defaultActions = {} }) => {
+      let defaultTypesObj = {}
+
+      if(defaultActions.get) {
+        Object.assign(defaultTypesObj, getDefaultCycle('get'))
+      }
+      if(defaultActions.getOne) {
+        Object.assign(defaultTypesObj, getDefaultCycle('getOne'))
+      }
+      if(defaultActions.create) {
+        Object.assign(defaultTypesObj, getDefaultCycle('create'))
+      }
+      if(defaultActions.update) {
+        Object.assign(defaultTypesObj, getDefaultCycle('update'))
+      }
+      if(defaultActions.remove) {
+        Object.assign(defaultTypesObj, getDefaultCycle('remove'))
+      }
+      if(defaultActions.reset) {
+        Object.assign(defaultTypesObj, { reset: true })
+      }
+
+      return defaultTypesObj
+    }
+
+    // build Action Types out of an object
+    const convertToTypes = (config, options) => {
+      const newConfig = R.merge(config, defaultTypes(options))
+      const typesCreator = R.curry(createTypes)(R.__, options)
+
+      return R.pipe(
+        R.keys, // just the keys
+        R.map(camelToScreamingSnake), // CONVERT_THEM
+        R.join(' '), // space separated
+        typesCreator // make them into Redux Types
+      )(newConfig)
+    }
+
+    // an action creator with additional properties
+    const createActionCreator = (name, extraPropNames, prefix) => {
+      // types are upcase and snakey
+      const type = prefix + camelToScreamingSnake(name)
+
+      // do we need extra props for this?
+      const noKeys = R.isNil(extraPropNames) || R.isEmpty(extraPropNames)
+
+      // a type-only action creator
+      if (noKeys) return () => ({
+        type
+      });
+
+      // an action creator with type + properties
+      return (...values) => {
+        const extraProps = R.zipObj(extraPropNames, values)
+
+        return R.merge({ type }, extraProps);
+      }
+    }
+
+    // build Action Creators out of an objet
+    const convertToCreators = (config, options) => {
+      const { prefix = '', defaultActions } = options
+
+      const userActions = R.mapObjIndexed((num, key, value) => {
+        if (typeof value[key] === 'function') {
+          // the user brought their own action creator
+          return value[key]
+        } else {
+          // lets make an action creator for them!
+          return createActionCreator(key, value[key], prefix)
+        }
+      })(config)
+
+      // Map default actions with know behavior
+      const defaultActionsCreators = {};
+      if(defaultActions) {
+        const { get, getOne, create, update, remove, reset } = defaultActions
+
+        if(get) {
+          Object.assign(defaultActionsCreators, {
+            getRequest: createActionCreator('getRequest', null, prefix),
+            getSuccess: createActionCreator('getSuccess', ['results'], prefix),
+            getFailure: createActionCreator('getFailure', ['error'], prefix),
+            getReset: createActionCreator('getReset', null, prefix),
+          })
+        }
+        
+        if(getOne) {
+          Object.assign(defaultActionsCreators, {
+            getOneRequest: createActionCreator('getOneRequest', ['id'], prefix),
+            getOneSuccess: createActionCreator('getOneSuccess', ['result'], prefix),
+            getOneFailure: createActionCreator('getOneFailure', ['error'], prefix),
+            getOneReset: createActionCreator('getOneReset', null, prefix),
+          })
+        }
+
+        // create is an array with required props
+        if(create) {
+          Object.assign(defaultActionsCreators, {
+            createRequest: createActionCreator('createRequest', create, prefix),
+            createSuccess: createActionCreator('createSuccess', null, prefix),
+            createFailure: createActionCreator('createFailure', ['error'], prefix),
+            createReset: createActionCreator('createReset', null, prefix),
+          })
+        }
+
+        // update is an array with required props
+        if(update) {
+          Object.assign(defaultActionsCreators, {
+            updateRequest: createActionCreator('updateRequest', update, prefix),
+            updateSuccess: createActionCreator('updateSuccess', null, prefix),
+            updateFailure: createActionCreator('updateFailure', ['error'], prefix),
+            updateReset: createActionCreator('updateReset', null, prefix),
+          })
+        }
+
+        if(remove) {
+          Object.assign(defaultActionsCreators, {
+            removeRequest: createActionCreator('removeRequest', ['id'], prefix),
+            removeSuccess: createActionCreator('removeSuccess', null, prefix),
+            removeFailure: createActionCreator('removeFailure', ['error'], prefix),
+            removeReset: createActionCreator('removeReset', null, prefix),
+          })
+        }
+
+        if(reset) {
+          Object.assign(defaultActionsCreators, {
+            reset: createActionCreator('reset', null, prefix),
+          })
+        }
+      }
+
+      // Merge declared user actions and default actions
+      return R.merge(userActions, defaultActionsCreators);
+    }
+
+    /**
+      Builds your Action Types and Action Creators at the same time
+      @param {object} config - An object with actions as key and an array of props as value
+      @param {object} options - Optional. // See more at https://github.com/skellock/reduxsauce
+      @return {object} An object with Action Types and Action Creators
+    */
+    const createActions = (config, options) => {
+      if (R.isNil(config)) {
+        throw new Error('an object is required to setup types and creators')
+      }
+      
+      return {
+        Types: convertToTypes(config, options),
+        Creators: convertToCreators(config, options)
+      }
+    }
+
+    ////////////////////////////
+    ///////  CREATE REDUCER
+    ////////////////////////////
+
+    const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) => {
+      let defaultActionsObj = {}
+
+      if(defaultActions.get) {
+        Object.assign(defaultActionsObj, {
+          [Types.GET_REQUEST]: state => state.merge({ get: { fetching: true }}, d),
+          [Types.GET_SUCCESS]: (state, { results }) => state.merge({ get: { fetching: false, error: null, results }}, d),
+          [Types.GET_FAILURE]: (state, { error }) => state.merge({ get: { fetching: false, error }}, d),
+          [Types.GET_RESET]: state => state.merge({ get: { fetching: false, error: null, results: [] }}, d),
+        })
+      }
+      if(defaultActions.getOne) {
+        Object.assign(defaultActionsObj, {
+          [Types.GET_ONE_REQUEST]: state => state.merge({ getOne: { fetching: true, result: null }}, d),
+          [Types.GET_ONE_SUCCESS]: (state, { result }) => state.merge({ getOne: { fetching: false, error: null, result }}, d),
+          [Types.GET_ONE_FAILURE]: (state, { error }) => state.merge({ getOne: { fetching: false, error }}, d),
+          [Types.GET_ONE_RESET]: state => state.merge({ getOne: { fetching: false, error: null, result: {} }}, d),
+        })
+      }
+      if(defaultActions.create) {
+        Object.assign(defaultActionsObj, {
+          [Types.CREATE_REQUEST]: state => state.merge({ create: { fetching: true }}, d),
+          [Types.CREATE_SUCCESS]: state => state.merge({ create: { fetching: false, success: true }}, d),
+          [Types.CREATE_FAILURE]: (state, { error }) => state.merge({ create: { fetching: false, error }}, d),
+          [Types.CREATE_RESET]: state => state.merge({ create: { success: false, error: null }, getOne: { result: null }}, d),
+        })
+      }
+      if(defaultActions.update) {
+        Object.assign(defaultActionsObj, {
+          [Types.UPDATE_REQUEST]: state => state.merge({ upgrade: { fetching: true }}, d),
+          [Types.UPDATE_SUCCESS]: state => state.merge({ upgrade: { fetching: false, success: true }}, d),
+          [Types.UPDATE_FAILURE]: (state, { error }) => state.merge({ upgrade: { fetching: false, error }}, d),
+          [Types.UPDATE_RESET]: state => state.merge({ upgrade: { success: false, error: null }, getOne: { result: null }}, d),
+        })
+      }
+      if(defaultActions.remove) {
+        Object.assign(defaultActionsObj, {
+          [Types.REMOVE_REQUEST]: state => state.merge({ remove: { fetching: true }}, d),
+          [Types.REMOVE_SUCCESS]: state => state.merge({ remove: { fetching: false, success: true }}, d),
+          [Types.REMOVE_FAILURE]: (state, { error }) => state.merge({ remove: { fetching: false, error }}, d),
+          [Types.REMOVE_RESET]: state => state.merge({ remove: { success: false, error: null }, getOne: { result: null }}, d),
+        })
+      }
+      if(defaultActions.reset) {
+        Object.assign(defaultActionsObj, { 
+          [Types.REMOVE_RESET]: INITIAL_STATE 
+        })
+      }
+
+      return defaultActionsObj
+    }
+
+    /**
+      Creates a reducer.
+      @param {object} initialState - The initial state for this reducer.
+      @param {object} handlers - Keys are action types (strings), values are reducers (functions).
+      @param {object} options - Capable of creating default action reducers (get, getOne, create, update, remove, reset)
+      @return {object} A reducer object.
+    */
+    const createReducer = (initialState, handlers, options) => {
+      // initial state is required
+      if (R.isNil(initialState)) {
+        throw new Error('initial state is required')
+      }
+
+      // handlers must be an object
+      if (R.isNil(handlers) || !R.is(Object, handlers)) {
+        throw new Error('handlers must be an object')
+      }
+
+      // handlers cannot have an undefined key
+      if (R.any(R.equals('undefined'))(R.keys(handlers))) {
+        throw new Error('handlers cannot have an undefined key')
+      }
+
+      const newHandlers = options ? R.merge(handlers, defaultActionsReducers(initialState, options)) : handlers
+
+      // create the reducer function
+      return (state = initialState, action) => {
+        // wrong actions, just return state
+        if (R.isNil(action)) return state
+        if (!R.has('type', action)) return state
+
+        // look for the handler
+        const handler = newHandlers[action.type]
+
+        // no handler no cry
+        if (R.isNil(handler)) return state
+
+        // execute the handler
+        return handler(state, action)
+      }
+    }
+
+    window.Reduxsauce = window.Reduxsauce || {};
+    window.Reduxsauce.createState = createState;
+    window.Reduxsauce.createTypes = createTypes;
+    window.Reduxsauce.createActions = createActions;
+    window.Reduxsauce.createReducer =createReducer;
+  })();
+</script>

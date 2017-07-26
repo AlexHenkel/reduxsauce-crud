@@ -1,0 +1,18 @@
+{
+  "name": "reduxsauce-polymer",
+  "description": "Redux wrapper for Polymer projects",
+  "main": "reduxsauce-polymer.html",
+  "authors": [
+    "Alejandro Henkel <alexh@kinedu.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
