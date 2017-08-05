@@ -32,9 +32,15 @@
           }
         case 'create':
         case 'update':
+          return {
+            fetching: false,
+            error: null,
+            success: false,
+          }
         case 'remove':
           return {
             fetching: false,
+            pending: null, // Store object to remove while fetching db, to update state without refresh
             error: null,
             success: false,
           }
@@ -312,10 +318,15 @@
       }
       if(defaultActions.remove) {
         Object.assign(defaultActionsObj, {
-          [Types.REMOVE_REQUEST]: state => state.merge({ remove: { fetching: true }}, d),
-          [Types.REMOVE_SUCCESS]: state => state.merge({ remove: { fetching: false, success: true }}, d),
-          [Types.REMOVE_FAILURE]: (state, { error }) => state.merge({ remove: { fetching: false, error }}, d),
-          [Types.REMOVE_RESET]: state => state.merge({ remove: { success: false, error: null }, getOne: { result: null }}, d),
+          [Types.REMOVE_REQUEST]: (state, { id }) => state.merge({ remove: { fetching: true, pending: id }}, d),
+          [Types.REMOVE_SUCCESS]: state => {
+            let { results } = state.get;
+            const { pending } = state.remove;
+            results = R.filter(item => item.id != pending, results);
+            return state.merge({ remove: { fetching: false, success: true, pending: null }, get: { results }}, d)
+          },
+          [Types.REMOVE_FAILURE]: (state, { error }) => state.merge({ remove: { fetching: false, error, pending: null }}, d),
+          [Types.REMOVE_RESET]: state => state.merge({ remove: { success: false, error: null, pending: null }, getOne: { result: null }}, d),
         })
       }
       if(defaultActions.reset) {
