@@ -54,7 +54,7 @@
       @param {object} config - Configuration for default actions
       @return {object} - An immutable state with merged custom an default properties
     */
-    const createState = (customState, defaultConfig) => {
+    const createState = (customState, defaultConfig = {}) => {
       const defaultActionsObj = {};
       if(defaultConfig.get) {
         Object.assign(defaultActionsObj, { get: getDefaultState('get')})
