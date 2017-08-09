@@ -60,7 +60,7 @@
         Object.assign(defaultActionsObj, { get: getDefaultState('get')})
       }
       if(defaultConfig.getOne) {
-        Object.assign(defaultActionsObj, { getOne: getDefaultState('getOne', defaultActionsObj.getOneInitial)})
+        Object.assign(defaultActionsObj, { getOne: getDefaultState('getOne', defaultConfig.getOneInitial)})
       }
       if(defaultConfig.create) {
         Object.assign(defaultActionsObj, { create: getDefaultState('create')})
