@@ -297,7 +297,7 @@
           [Types.GET_ONE_REQUEST]: state => state.merge({ getOne: { fetching: true }}, d),
           [Types.GET_ONE_SUCCESS]: (state, { id, result }) => state.merge({ getOne: { fetching: false, error: null, id, result }}, d),
           [Types.GET_ONE_FAILURE]: (state, { id, error }) => state.merge({ getOne: { fetching: false, id, error }}, d),
-          [Types.GET_ONE_RESET]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: {} }}, d),
+          [Types.GET_ONE_RESET]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null, id: null }}, d),
         })
       }
       if(defaultActions.create) {
@@ -311,9 +311,9 @@
       if(defaultActions.update) {
         Object.assign(defaultActionsObj, {
           [Types.UPDATE_REQUEST]: state => state.merge({ upgrade: { fetching: true }}, d),
-          [Types.UPDATE_SUCCESS]: state => state.merge({ upgrade: { fetching: false, success: true }}, d),
+          [Types.UPDATE_SUCCESS]: state => state.merge({ upgrade: { fetching: false, success: true }, getOne: { result: null, id: null }}, d),
           [Types.UPDATE_FAILURE]: (state, { error }) => state.merge({ upgrade: { fetching: false, error }}, d),
-          [Types.UPDATE_RESET]: state => state.merge({ upgrade: { success: false, error: null }, getOne: { result: null }}, d),
+          [Types.UPDATE_RESET]: state => state.merge({ upgrade: { success: false, error: null }, getOne: { result: null, id: null }}, d),
         })
       }
       if(defaultActions.remove) {
