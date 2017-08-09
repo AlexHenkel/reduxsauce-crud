@@ -15,7 +15,7 @@
     ////////////////////////////
     ///////  CREATE INITIAL STATE
     ////////////////////////////
-    const getDefaultState = action => {
+    const getDefaultState = (action, getOneInitial = null) => {
       switch(action) {
         case 'get':
           return {
@@ -27,7 +27,7 @@
           return {
             fetching: false,
             error: null,
-            result: null,
+            result: getOneInitial,
             id: null,
           }
         case 'create':
@@ -60,7 +60,7 @@
         Object.assign(defaultActionsObj, { get: getDefaultState('get')})
       }
       if(defaultConfig.getOne) {
-        Object.assign(defaultActionsObj, { getOne: getDefaultState('getOne')})
+        Object.assign(defaultActionsObj, { getOne: getDefaultState('getOne', defaultActionsObj.getOneInitial)})
       }
       if(defaultConfig.create) {
         Object.assign(defaultActionsObj, { create: getDefaultState('create')})
