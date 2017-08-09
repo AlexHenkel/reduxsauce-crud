@@ -316,7 +316,7 @@
             // Add new element to desired property array
             result[property].push(newElement);
             // Update the complete object
-            return state.merge({ get: { result }}, d)
+            return state.merge({ getOne: { result }}, d)
           },
           [Types.GET_ONE_UPDATE_FROM]: (state, { id, newElement, property }) => {
             // Get the complete object
@@ -328,7 +328,7 @@
             // Modify updated index with new info
             result[property][index] = R.merge(result[property][index], newElement);
             // Update the complete object
-            return state.merge({ get: { result }}, d)
+            return state.merge({ getOne: { result }}, d)
           },
           [Types.GET_ONE_REMOVE_FROM]: (state, { id, property }) => {
             // Get the complete object
@@ -340,7 +340,7 @@
             // Update result desired property, with the new array
             result[property] = currResults;
             // Update the complete object
-            return state.merge({ get: { result }}, d)
+            return state.merge({ getOne: { result }}, d)
           },
         })
       }
