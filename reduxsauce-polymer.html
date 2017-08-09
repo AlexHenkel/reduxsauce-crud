@@ -311,6 +311,8 @@
           [Types.GET_ONE_CREATE_FROM]: (state, { id, property, newElement }) => {
             // Get the complete object
             let { result } = state.getOne;
+            // Get out if it's not defined
+            if(!result) return state;
             // Add new element to desired property array
             result[property].push(newElement);
             // Update the complete object
@@ -319,6 +321,8 @@
           [Types.GET_ONE_UPDATE_FROM]: (state, { id, property, newElement }) => {
             // Get the complete object
             let { result } = state.getOne;
+            // Get out if it's not defined
+            if(!result) return state;
             // Get updated index on the desired property array
             const index = R.findIndex(R.propEq('id', newElement.id))(result[property]);
             // Modify updated index with new info
@@ -329,6 +333,8 @@
           [Types.GET_ONE_REMOVE_FROM]: (state, { id, property }) => {
             // Get the complete object
             let { result } = state.getOne;
+            // Get out if it's not defined
+            if(!result) return state;
             // Get the desired property array without the element
             const currResults = R.filter(item => item.id != id, result[property]);
             // Update result desired property, with the new array
