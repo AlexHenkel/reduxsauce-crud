@@ -222,9 +222,9 @@
             getOneFailure: createActionCreator('getOneFailure', ['error'], prefix),
             getOneReset: createActionCreator('getOneReset', null, prefix),
             // Action to add an object of a nested property
-            getOneCreateFrom: createActionCreator('getOneCreateFrom', ['id', 'property', 'newElement'], prefix),
+            getOneCreateFrom: createActionCreator('getOneCreateFrom', ['newElement', 'property'], prefix),
             // Action to update an object of a nested property
-            getOneUpdateFrom: createActionCreator('getOneUpdateFrom', ['id', 'property', 'newElement'], prefix),
+            getOneUpdateFrom: createActionCreator('getOneUpdateFrom', ['id', 'newElement', 'property'], prefix),
             // Action to remove an object of a nested property
             getOneRemoveFrom: createActionCreator('getOneRemoveFrom', ['id', 'property'], prefix),
           })
@@ -308,7 +308,7 @@
           [Types.GET_ONE_SUCCESS]: (state, { id, result }) => state.merge({ getOne: { fetching: false, error: null, id, result }}, d),
           [Types.GET_ONE_FAILURE]: (state, { id, error }) => state.merge({ getOne: { fetching: false, id, error }}, d),
           [Types.GET_ONE_RESET]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null }}, d),
-          [Types.GET_ONE_CREATE_FROM]: (state, { id, property, newElement }) => {
+          [Types.GET_ONE_CREATE_FROM]: (state, { newElement, property }) => {
             // Get the complete object
             let { result } = state.getOne;
             // Get out if it's not defined
@@ -318,7 +318,7 @@
             // Update the complete object
             return state.merge({ get: { result }}, d)
           },
-          [Types.GET_ONE_UPDATE_FROM]: (state, { id, property, newElement }) => {
+          [Types.GET_ONE_UPDATE_FROM]: (state, { id, newElement, property }) => {
             // Get the complete object
             let { result } = state.getOne;
             // Get out if it's not defined
