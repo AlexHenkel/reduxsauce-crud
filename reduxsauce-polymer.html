@@ -131,7 +131,11 @@
         Object.assign(defaultTypesObj, getDefaultCycle('get'))
       }
       if(defaultActions.getOne) {
-        Object.assign(defaultTypesObj, getDefaultCycle('getOne'))
+        Object.assign(defaultTypesObj, getDefaultCycle('getOne'), {
+          ['getOneCreateFrom']: true,
+          ['getOneUpdateFrom']: true,
+          ['getOneRemoveFrom']: true,
+        })
       }
       if(defaultActions.create) {
         Object.assign(defaultTypesObj, getDefaultCycle('create'))
@@ -306,7 +310,7 @@
           [Types.GET_ONE_RESET]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null }}, d),
           [Types.GET_ONE_CREATE_FROM]: (state, { id, property, newElement }) => {
             // Get the complete object
-            let { result } = state.get;
+            let { result } = state.getOne;
             // Add new element to desired property array
             result[property].push(newElement);
             // Update the complete object
@@ -314,7 +318,7 @@
           },
           [Types.GET_ONE_UPDATE_FROM]: (state, { id, property, newElement }) => {
             // Get the complete object
-            let { result } = state.get;
+            let { result } = state.getOne;
             // Get updated index on the desired property array
             const index = R.findIndex(R.propEq('id', newElement.id))(result[property]);
             // Modify updated index with new info
@@ -324,7 +328,7 @@
           },
           [Types.GET_ONE_REMOVE_FROM]: (state, { id, property }) => {
             // Get the complete object
-            let { result } = state.get;
+            let { result } = state.getOne;
             // Get the desired property array without the element
             const currResults = R.filter(item => item.id != id, result[property]);
             // Update result desired property, with the new array
