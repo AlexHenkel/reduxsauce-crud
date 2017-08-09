@@ -224,7 +224,7 @@
         if(create) {
           Object.assign(defaultActionsCreators, {
             createRequest: createActionCreator('createRequest', create, prefix),
-            createSuccess: createActionCreator('createSuccess', null, prefix),
+            createSuccess: createActionCreator('createSuccess', ['result'], prefix),
             createFailure: createActionCreator('createFailure', ['error'], prefix),
             createReset: createActionCreator('createReset', null, prefix),
           })
@@ -234,7 +234,7 @@
         if(update) {
           Object.assign(defaultActionsCreators, {
             updateRequest: createActionCreator('updateRequest', update, prefix),
-            updateSuccess: createActionCreator('updateSuccess', null, prefix),
+            updateSuccess: createActionCreator('updateSuccess', ['result'], prefix),
             updateFailure: createActionCreator('updateFailure', ['error'], prefix),
             updateReset: createActionCreator('updateReset', null, prefix),
           })
@@ -297,13 +297,18 @@
           [Types.GET_ONE_REQUEST]: state => state.merge({ getOne: { fetching: true }}, d),
           [Types.GET_ONE_SUCCESS]: (state, { id, result }) => state.merge({ getOne: { fetching: false, error: null, id, result }}, d),
           [Types.GET_ONE_FAILURE]: (state, { id, error }) => state.merge({ getOne: { fetching: false, id, error }}, d),
-          [Types.GET_ONE_RESET]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null, id: null }}, d),
+          [Types.GET_ONE_RESET]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null }}, d),
         })
       }
       if(defaultActions.create) {
         Object.assign(defaultActionsObj, {
           [Types.CREATE_REQUEST]: state => state.merge({ create: { fetching: true }}, d),
-          [Types.CREATE_SUCCESS]: state => state.merge({ create: { fetching: false, success: true }}, d),
+          [Types.CREATE_SUCCESS]: (state, { result }) => {
+            // Add new element to get elements
+            let { results } = state.get;
+            results.push(result);
+            return state.merge({ create: { fetching: false, success: true }, get: { results }}, d)
+          },
           [Types.CREATE_FAILURE]: (state, { error }) => state.merge({ create: { fetching: false, error }}, d),
           [Types.CREATE_RESET]: state => state.merge({ create: { success: false, error: null }, getOne: { result: null }}, d),
         })
@@ -311,9 +316,17 @@
       if(defaultActions.update) {
         Object.assign(defaultActionsObj, {
           [Types.UPDATE_REQUEST]: state => state.merge({ upgrade: { fetching: true }}, d),
-          [Types.UPDATE_SUCCESS]: state => state.merge({ upgrade: { fetching: false, success: true }, getOne: { result: null, id: null }}, d),
+          [Types.UPDATE_SUCCESS]: (state, { result }) => {
+            // Get array with all results
+            let { results } = state.get;
+            // Get updated index
+            const index = R.findIndex(R.propEq('id', result.id))(results);
+            // Modify updated index with new info
+            results[index] = R.merge(results[index], result);
+            return state.merge({ upgrade: { fetching: false, success: true }, get: { results }}, d)
+          },
           [Types.UPDATE_FAILURE]: (state, { error }) => state.merge({ upgrade: { fetching: false, error }}, d),
-          [Types.UPDATE_RESET]: state => state.merge({ upgrade: { success: false, error: null }, getOne: { result: null, id: null }}, d),
+          [Types.UPDATE_RESET]: state => state.merge({ upgrade: { success: false, error: null, pending: null }, getOne: { result: null, id: null }}, d),
         })
       }
       if(defaultActions.remove) {
@@ -326,7 +339,7 @@
             return state.merge({ remove: { fetching: false, success: true }, get: { results }}, d)
           },
           [Types.REMOVE_FAILURE]: (state, { error }) => state.merge({ remove: { fetching: false, error, pending: null }}, d),
-          [Types.REMOVE_RESET]: state => state.merge({ remove: { success: false, error: null, pending: null }, getOne: { result: null }}, d),
+          [Types.REMOVE_RESET]: state => state.merge({ remove: { success: false, error: null, pending: null }, getOne: { result: null, id: null }}, d),
         })
       }
       if(defaultActions.reset) {
