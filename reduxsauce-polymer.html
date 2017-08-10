@@ -310,7 +310,7 @@
           [Types.GET_ONE_RESET]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null }}, d),
           [Types.GET_ONE_CREATE_FROM]: (state, { newElement, property }) => {
             // Get the complete object
-            let { result } = state.getOne;
+            let { result } = R.clone(state.getOne);
             // Get out if it's not defined
             if(!result) return state;
             // Add new element to desired property array
@@ -320,7 +320,7 @@
           },
           [Types.GET_ONE_UPDATE_FROM]: (state, { id, newElement, property }) => {
             // Get the complete object
-            let { result } = state.getOne;
+            let { result } = R.clone(state.getOne);
             // Get out if it's not defined
             if(!result) return state;
             // Get updated index on the desired property array
@@ -332,7 +332,7 @@
           },
           [Types.GET_ONE_REMOVE_FROM]: (state, { id, property }) => {
             // Get the complete object
-            let { result } = state.getOne;
+            let { result } = R.clone(state.getOne);
             // Get out if it's not defined
             if(!result) return state;
             // Get the desired property array without the element
@@ -349,7 +349,7 @@
           [Types.CREATE_REQUEST]: state => state.merge({ create: { fetching: true }}, d),
           [Types.CREATE_SUCCESS]: (state, { result }) => {
             // Add new element to get elements
-            let { results } = state.get;
+            let { results } = R.clone(state.get);
             results.push(result);
             return state.merge({ create: { fetching: false, success: true }, get: { results }}, d)
           },
@@ -362,7 +362,7 @@
           [Types.UPDATE_REQUEST]: state => state.merge({ upgrade: { fetching: true }}, d),
           [Types.UPDATE_SUCCESS]: (state, { result }) => {
             // Get array with all results
-            let { results } = state.get;
+            let { results } = R.clone(state.get);
             // Get updated index
             const index = R.findIndex(R.propEq('id', result.id))(results);
             // Modify updated index with new info
@@ -377,7 +377,7 @@
         Object.assign(defaultActionsObj, {
           [Types.REMOVE_REQUEST]: (state, { id }) => state.merge({ remove: { fetching: true, pending: id }}, d),
           [Types.REMOVE_SUCCESS]: state => {
-            let { results } = state.get;
+            let { results } = R.clone(state.get);
             const { pending } = state.remove;
             results = R.filter(item => item.id != pending, results);
             return state.merge({ remove: { fetching: false, success: true }, get: { results }}, d)
