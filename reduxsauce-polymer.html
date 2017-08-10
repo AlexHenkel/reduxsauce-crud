@@ -308,11 +308,11 @@
           [Types.GET_ONE_SUCCESS]: (state, { id, result }) => state.merge({ getOne: { fetching: false, error: null, id, result }}, d),
           [Types.GET_ONE_FAILURE]: (state, { id, error }) => state.merge({ getOne: { fetching: false, id, error }}, d),
           [Types.GET_ONE_RESET]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null }}, d),
-          [Types.GET_ONE_CREATE_FROM]: (state, { newElement, property }) => {
+          [Types.GET_ONE_CREATE_FROM]: (state, { newElement, property }, customFilter = null) => {
             // Get the complete object
             let { result } = R.clone(state.getOne);
-            // Get out if it's not defined
-            if(!result) return state;
+            // Verify if result exists or if filter exists and if it fails
+            if(!result || (filter && !customFilter(newElement))) return state;
             // Add new element to desired property array
             result[property].push(newElement);
             // Update the complete object
