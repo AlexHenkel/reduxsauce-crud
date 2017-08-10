@@ -95,7 +95,7 @@
         R.split(/\s/),
         R.map(R.pipe(R.trim)),
         R.without([null, '']),
-        R.map((x) => [x, prefix + x]),
+        R.map((x) => [x, prefix + camelToScreamingSnake(x)]),
         R.fromPairs
       )(types)
     }
@@ -160,7 +160,6 @@
 
       return R.pipe(
         R.keys, // just the keys
-        R.map(camelToScreamingSnake), // CONVERT_THEM
         R.join(' '), // space separated
         typesCreator // make them into Redux Types
       )(newConfig)
@@ -296,19 +295,19 @@
 
       if(defaultActions.get) {
         Object.assign(defaultActionsObj, {
-          [Types.GET_REQUEST]: state => state.merge({ get: { fetching: true }}, d),
-          [Types.GET_SUCCESS]: (state, { results }) => state.merge({ get: { fetching: false, error: null, results }}, d),
-          [Types.GET_FAILURE]: (state, { error }) => state.merge({ get: { fetching: false, error }}, d),
-          [Types.GET_RESET]: state => state.merge({ get: { fetching: false, error: null, results: [] }}, d),
+          [Types.getRequest]: state => state.merge({ get: { fetching: true }}, d),
+          [Types.getSuccess]: (state, { results }) => state.merge({ get: { fetching: false, error: null, results }}, d),
+          [Types.getFailure]: (state, { error }) => state.merge({ get: { fetching: false, error }}, d),
+          [Types.getReset]: state => state.merge({ get: { fetching: false, error: null, results: [] }}, d),
         })
       }
       if(defaultActions.getOne) {
         Object.assign(defaultActionsObj, {
-          [Types.GET_ONE_REQUEST]: state => state.merge({ getOne: { fetching: true }}, d),
-          [Types.GET_ONE_SUCCESS]: (state, { id, result }) => state.merge({ getOne: { fetching: false, error: null, id, result }}, d),
-          [Types.GET_ONE_FAILURE]: (state, { id, error }) => state.merge({ getOne: { fetching: false, id, error }}, d),
-          [Types.GET_ONE_RESET]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null }}, d),
-          [Types.GET_ONE_CREATE_FROM]: (state, { newElement, property, customFilter = null}) => {
+          [Types.getOneRequest]: state => state.merge({ getOne: { fetching: true }}, d),
+          [Types.getOneSuccess]: (state, { id, result }) => state.merge({ getOne: { fetching: false, error: null, id, result }}, d),
+          [Types.getOneFailure]: (state, { id, error }) => state.merge({ getOne: { fetching: false, id, error }}, d),
+          [Types.getOneReset]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null }}, d),
+          [Types.getOneCreateForm]: (state, { newElement, property, customFilter = null}) => {
             // Get the complete object
             let { result } = R.clone(state.getOne);
             // Verify if result exists or if filter exists and if it fails
@@ -318,7 +317,7 @@
             // Update the complete object
             return state.merge({ getOne: { result }}, d)
           },
-          [Types.GET_ONE_UPDATE_FROM]: (state, { id, newElement, property }) => {
+          [Types.getOneUpdateForm]: (state, { id, newElement, property }) => {
             // Get the complete object
             let { result } = R.clone(state.getOne);
             // Get out if it's not defined
@@ -330,7 +329,7 @@
             // Update the complete object
             return state.merge({ getOne: { result }}, d)
           },
-          [Types.GET_ONE_REMOVE_FROM]: (state, { id, property }) => {
+          [Types.getOneRemoveForm]: (state, { id, property }) => {
             // Get the complete object
             let { result } = R.clone(state.getOne);
             // Get out if it's not defined
@@ -346,21 +345,21 @@
       }
       if(defaultActions.create) {
         Object.assign(defaultActionsObj, {
-          [Types.CREATE_REQUEST]: state => state.merge({ create: { fetching: true }}, d),
-          [Types.CREATE_SUCCESS]: (state, { result }) => {
+          [Types.createRequest]: state => state.merge({ create: { fetching: true }}, d),
+          [Types.createSuccess]: (state, { result }) => {
             // Add new element to get elements
             let { results } = R.clone(state.get);
             results.push(result);
             return state.merge({ create: { fetching: false, success: true }, get: { results }}, d)
           },
-          [Types.CREATE_FAILURE]: (state, { error }) => state.merge({ create: { fetching: false, error }}, d),
-          [Types.CREATE_RESET]: state => state.merge({ create: { success: false, error: null }, getOne: { result: null }}, d),
+          [Types.createFailure]: (state, { error }) => state.merge({ create: { fetching: false, error }}, d),
+          [Types.createReset]: state => state.merge({ create: { success: false, error: null }, getOne: { result: null }}, d),
         })
       }
       if(defaultActions.update) {
         Object.assign(defaultActionsObj, {
-          [Types.UPDATE_REQUEST]: state => state.merge({ upgrade: { fetching: true }}, d),
-          [Types.UPDATE_SUCCESS]: (state, { result }) => {
+          [Types.updateRequest]: state => state.merge({ upgrade: { fetching: true }}, d),
+          [Types.updateSuccess]: (state, { result }) => {
             // Get array with all results
             let { results } = R.clone(state.get);
             // Get updated index
@@ -369,26 +368,26 @@
             results[index] = R.merge(results[index], result);
             return state.merge({ upgrade: { fetching: false, success: true }, get: { results }}, d)
           },
-          [Types.UPDATE_FAILURE]: (state, { error }) => state.merge({ upgrade: { fetching: false, error }}, d),
-          [Types.UPDATE_RESET]: state => state.merge({ upgrade: { success: false, error: null, pending: null }, getOne: { result: null, id: null }}, d),
+          [Types.updateFailure]: (state, { error }) => state.merge({ upgrade: { fetching: false, error }}, d),
+          [Types.updateReset]: state => state.merge({ upgrade: { success: false, error: null, pending: null }, getOne: { result: null, id: null }}, d),
         })
       }
       if(defaultActions.remove) {
         Object.assign(defaultActionsObj, {
-          [Types.REMOVE_REQUEST]: (state, { id }) => state.merge({ remove: { fetching: true, pending: id }}, d),
-          [Types.REMOVE_SUCCESS]: state => {
+          [Types.removeRequest]: (state, { id }) => state.merge({ remove: { fetching: true, pending: id }}, d),
+          [Types.removeSuccess]: state => {
             let { results } = R.clone(state.get);
             const { pending } = state.remove;
             results = R.filter(item => item.id != pending, results);
             return state.merge({ remove: { fetching: false, success: true }, get: { results }}, d)
           },
-          [Types.REMOVE_FAILURE]: (state, { error }) => state.merge({ remove: { fetching: false, error, pending: null }}, d),
-          [Types.REMOVE_RESET]: state => state.merge({ remove: { success: false, error: null, pending: null }, getOne: { result: null, id: null }}, d),
+          [Types.removeFailure]: (state, { error }) => state.merge({ remove: { fetching: false, error, pending: null }}, d),
+          [Types.removeReset]: state => state.merge({ remove: { success: false, error: null, pending: null }, getOne: { result: null, id: null }}, d),
         })
       }
       if(defaultActions.reset) {
         Object.assign(defaultActionsObj, { 
-          [Types.REMOVE_RESET]: INITIAL_STATE 
+          [Types.reset]: INITIAL_STATE 
         })
       }
 
