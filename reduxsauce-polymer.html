@@ -312,7 +312,7 @@
             // Get the complete object
             let { result } = R.clone(state.getOne);
             // Verify if result exists or if filter exists and if it fails
-            if(!result || (filter && !customFilter(newElement))) return state;
+            if(!result || (customFilter && !customFilter(newElement))) return state;
             // Add new element to desired property array
             result[property].push(newElement);
             // Update the complete object
