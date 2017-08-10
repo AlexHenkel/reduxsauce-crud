@@ -222,7 +222,7 @@
             getOneFailure: createActionCreator('getOneFailure', ['error'], prefix),
             getOneReset: createActionCreator('getOneReset', null, prefix),
             // Action to add an object of a nested property
-            getOneCreateFrom: createActionCreator('getOneCreateFrom', ['newElement', 'property'], prefix),
+            getOneCreateFrom: createActionCreator('getOneCreateFrom', ['newElement', 'property', 'customFilter'], prefix),
             // Action to update an object of a nested property
             getOneUpdateFrom: createActionCreator('getOneUpdateFrom', ['id', 'newElement', 'property'], prefix),
             // Action to remove an object of a nested property
@@ -308,7 +308,7 @@
           [Types.GET_ONE_SUCCESS]: (state, { id, result }) => state.merge({ getOne: { fetching: false, error: null, id, result }}, d),
           [Types.GET_ONE_FAILURE]: (state, { id, error }) => state.merge({ getOne: { fetching: false, id, error }}, d),
           [Types.GET_ONE_RESET]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null }}, d),
-          [Types.GET_ONE_CREATE_FROM]: (state, { newElement, property }, customFilter = null) => {
+          [Types.GET_ONE_CREATE_FROM]: (state, { newElement, property, customFilter = null}) => {
             // Get the complete object
             let { result } = R.clone(state.getOne);
             // Verify if result exists or if filter exists and if it fails
