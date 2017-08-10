@@ -223,7 +223,7 @@
             // Action to add an object of a nested property
             getOneCreateFrom: createActionCreator('getOneCreateFrom', ['newElement', 'property', 'customFilter'], prefix),
             // Action to update an object of a nested property
-            getOneUpdateFrom: createActionCreator('getOneUpdateFrom', ['id', 'newElement', 'property'], prefix),
+            getOneUpdateFrom: createActionCreator('getOneUpdateFrom', ['newElement', 'property'], prefix),
             // Action to remove an object of a nested property
             getOneRemoveFrom: createActionCreator('getOneRemoveFrom', ['id', 'property'], prefix),
           })
@@ -317,7 +317,7 @@
             // Update the complete object
             return state.merge({ getOne: { result }}, d)
           },
-          [Types.getOneUpdateFrom]: (state, { id, newElement, property }) => {
+          [Types.getOneUpdateFrom]: (state, { newElement, property }) => {
             // Get the complete object
             let { result } = R.clone(state.getOne);
             // Get out if it's not defined
