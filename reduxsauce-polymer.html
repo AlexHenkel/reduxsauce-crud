@@ -232,7 +232,7 @@
         // create is an array with required props
         if(create) {
           Object.assign(defaultActionsCreators, {
-            createRequest: createActionCreator('createRequest', create, prefix),
+            createRequest: createActionCreator('createRequest', ['data'], prefix),
             createSuccess: createActionCreator('createSuccess', ['result'], prefix),
             createFailure: createActionCreator('createFailure', ['error'], prefix),
             createReset: createActionCreator('createReset', null, prefix),
@@ -242,7 +242,7 @@
         // update is an array with required props
         if(update) {
           Object.assign(defaultActionsCreators, {
-            updateRequest: createActionCreator('updateRequest', update, prefix),
+            updateRequest: createActionCreator('updateRequest', ['id', 'data'], prefix),
             updateSuccess: createActionCreator('updateSuccess', ['result'], prefix),
             updateFailure: createActionCreator('updateFailure', ['error'], prefix),
             updateReset: createActionCreator('updateReset', null, prefix),
