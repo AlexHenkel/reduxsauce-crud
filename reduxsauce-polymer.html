@@ -307,7 +307,7 @@
           [Types.getOneSuccess]: (state, { id, result }) => state.merge({ getOne: { fetching: false, error: null, id, result }}, d),
           [Types.getOneFailure]: (state, { id, error }) => state.merge({ getOne: { fetching: false, id, error }}, d),
           [Types.getOneReset]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null }}, d),
-          [Types.getOneCreateForm]: (state, { newElement, property, customFilter = null}) => {
+          [Types.getOneCreateFrom]: (state, { newElement, property, customFilter = null}) => {
             // Get the complete object
             let { result } = R.clone(state.getOne);
             // Verify if result exists or if filter exists and if it fails
@@ -317,7 +317,7 @@
             // Update the complete object
             return state.merge({ getOne: { result }}, d)
           },
-          [Types.getOneUpdateForm]: (state, { id, newElement, property }) => {
+          [Types.getOneUpdateFrom]: (state, { id, newElement, property }) => {
             // Get the complete object
             let { result } = R.clone(state.getOne);
             // Get out if it's not defined
@@ -329,7 +329,7 @@
             // Update the complete object
             return state.merge({ getOne: { result }}, d)
           },
-          [Types.getOneRemoveForm]: (state, { id, property }) => {
+          [Types.getOneRemoveFrom]: (state, { id, property }) => {
             // Get the complete object
             let { result } = R.clone(state.getOne);
             // Get out if it's not defined
