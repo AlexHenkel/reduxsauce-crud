@@ -362,6 +362,12 @@
         Object.assign(defaultActionsObj, {
           [Types.updateRequest]: state => state.merge({ upgrade: { fetching: true }}, d),
           [Types.updateSuccess]: (state, { result }) => {
+            // Get getOne item
+            let getOneItem = R.clone(state.getOne);
+            // Verify if new element is equal to the one in getOne, in order to update it
+            if(result.id === getOneItem.id) {
+              getOneItem = R.merge(getOneItem, result);
+            }
             // Get array with all results
             let { results } = R.clone(state.get);
             // Get updated index
@@ -371,7 +377,7 @@
               // Modify updated index with new info
               results[index] = R.merge(results[index], result);
             }
-            return state.merge({ upgrade: { fetching: false, success: true }, get: { results }}, d)
+            return state.merge({ upgrade: { fetching: false, success: true }, get: { results }, getOne: { result: getOneItem } }, d)
           },
           [Types.updateFailure]: (state, { error }) => state.merge({ upgrade: { fetching: false, error }}, d),
           [Types.updateReset]: state => state.merge({ upgrade: { success: false, error: null, pending: null }, getOne: { result: null, id: null }}, d),
