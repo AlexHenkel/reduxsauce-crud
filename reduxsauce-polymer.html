@@ -366,10 +366,11 @@
             let { results } = R.clone(state.get);
             // Get updated index
             const index = R.findIndex(R.propEq('id', result.id))(results);
-            // Return if it's not in current object
-            if(index === -1) return state;
-            // Modify updated index with new info
-            results[index] = R.merge(results[index], result);
+            // Verify if object is found
+            if(index >= 0) {
+              // Modify updated index with new info
+              results[index] = R.merge(results[index], result);
+            }
             return state.merge({ upgrade: { fetching: false, success: true }, get: { results }}, d)
           },
           [Types.updateFailure]: (state, { error }) => state.merge({ upgrade: { fetching: false, error }}, d),
