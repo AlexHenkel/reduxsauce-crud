@@ -135,6 +135,7 @@
             ['getOneCreateFrom']: true,
             ['getOneUpdateFrom']: true,
             ['getOneRemoveFrom']: true,
+            ['getOneFromState']: true,
           })
         }
         if(defaultActions.create) {
@@ -226,6 +227,8 @@
               getOneUpdateFrom: createActionCreator('getOneUpdateFrom', ['newElement', 'property'], prefix),
               // Action to remove an object of a nested property
               getOneRemoveFrom: createActionCreator('getOneRemoveFrom', ['id', 'property'], prefix),
+              // Action to get one from other redux action path
+              getOneFromState: createActionCreator('getOneFromState', ['id', 'path'], prefix),
             })
           }
   
