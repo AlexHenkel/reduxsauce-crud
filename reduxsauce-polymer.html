@@ -367,7 +367,7 @@
             [Types.updateRequest]: state => state.merge({ upgrade: { fetching: true }}, d),
             [Types.updateSuccess]: (state, { result }) => {
               // Get getOne item
-              let getOneItem = R.clone(state.getOne);
+              let getOneItem = R.clone(state.getOne.result);
               // Verify if new element is equal to the one in getOne, in order to update it
               if(result.id === getOneItem.id) {
                 getOneItem = R.merge(getOneItem, result);
