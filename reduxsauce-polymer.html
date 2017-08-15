@@ -255,7 +255,7 @@
           if(remove) {
             Object.assign(defaultActionsCreators, {
               removeRequest: createActionCreator('removeRequest', ['id'], prefix),
-              removeSuccess: createActionCreator('removeSuccess', null, prefix),
+              removeSuccess: createActionCreator('removeSuccess', ['id'], prefix),
               removeFailure: createActionCreator('removeFailure', ['error'], prefix),
               removeReset: createActionCreator('removeReset', null, prefix),
             })
