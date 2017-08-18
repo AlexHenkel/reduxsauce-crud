@@ -309,7 +309,6 @@
           Object.assign(defaultActionsObj, {
             [Types.getOneRequest]: state => state.merge({ getOne: { fetching: true }}, d),
             [Types.getOneSuccess]: (state, { id, result, noResolve }) => {
-              console.log(noResolve);
               let getOne = {
                 error: null,
                 result,
