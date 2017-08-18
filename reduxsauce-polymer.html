@@ -218,7 +218,7 @@
           if(getOne) {
             Object.assign(defaultActionsCreators, {
               getOneRequest: createActionCreator('getOneRequest', ['id'], prefix),
-              getOneSuccess: createActionCreator('getOneSuccess', ['id', 'result'], prefix),
+              getOneSuccess: createActionCreator('getOneSuccess', ['id', 'result', 'noResolve'], prefix),
               getOneFailure: createActionCreator('getOneFailure', ['error'], prefix),
               getOneReset: createActionCreator('getOneReset', null, prefix),
               // Action to add an object of a nested property
@@ -308,7 +308,18 @@
         if(getOne) {
           Object.assign(defaultActionsObj, {
             [Types.getOneRequest]: state => state.merge({ getOne: { fetching: true }}, d),
-            [Types.getOneSuccess]: (state, { id, result }) => state.merge({ getOne: { fetching: false, error: null, id, result }}, d),
+            [Types.getOneSuccess]: (state, { id, result, noResolve }) => {
+              console.log(noResolve);
+              let getOne = {
+                error: null,
+                result,
+              }
+              if(!noResolve) {
+                getOne.fetching = false;
+                getOne.id = id;
+              }
+              return state.merge({ getOne }, d)
+            },
             [Types.getOneFailure]: (state, { id, error }) => state.merge({ getOne: { fetching: false, id, error }}, d),
             [Types.getOneReset]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null }}, d),
             [Types.getOneCreateFrom]: (state, { newElement, property, customFilter = null}) => {
