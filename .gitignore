@@ -1,2 +1,9 @@
 bower_components*
 bower-*.json
+node_modules
+docs
+.nyc_output
+coverage
+dist
+lib/.babelrc
+yarn.lock
