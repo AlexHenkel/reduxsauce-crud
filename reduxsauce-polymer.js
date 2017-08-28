@@ -1,4 +1,7 @@
 import R from 'ramda'
+import Immutable from 'seamless-immutable'
+
+const d = { deep: true }
 
 ////////////////////////////
 ///////  CREATE INITIAL STATE
@@ -73,15 +76,15 @@ const createState = (customState, defaultConfig = {}) => {
   @param {object} options - Optional. // See more at https://github.com/skellock/reduxsauce
   @return {object} A types object.
 */
-export const createTypes = (types, options) => {
+const createTypes = (types, options) => {
   if (R.isNil(types)) throw new Error('valid types are required')
 
-  const { prefix = '' } = options
-
+  const { prefix = '' } = options || {}
+  
   return R.pipe(
     R.trim,
     R.split(/\s/),
-    R.map(R.pipe(R.trim)),
+    R.map(R.trim),
     R.without([null, '']),
     R.map((x) => [x, prefix + camelToScreamingSnake(x)]),
     R.fromPairs
@@ -266,11 +269,11 @@ const convertToCreators = (config, options = {}) => {
   @param {object} options - Optional. // See more at https://github.com/skellock/reduxsauce
   @return {object} An object with Action Types and Action Creators
 */
-export const createActions = (config, options = {}) => {
+const createActions = (config, options = {}) => {
   if (R.isNil(config)) {
     throw new Error('an object is required to setup types and creators')
   }
-  
+
   return {
     Types: convertToTypes(config, options),
     Creators: convertToCreators(config, options)
@@ -357,7 +360,7 @@ const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) =
         return state.merge({ create: { fetching: false, success: true }, get: { results }}, d)
       },
       [Types.createFailure]: (state, { error }) => state.merge({ create: { fetching: false, error }}, d),
-      [Types.createReset]: state => state.merge({ create: { success: false, error: null }, getOne: { result: null }}, d),
+      [Types.createReset]: state => state.merge({ create: { success: false, error: null }}, d),
     })
   }
   if(update) {
@@ -367,7 +370,7 @@ const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) =
         // Get getOne item
         let getOneItem = R.clone(state.getOne.result);
         // Verify if new element is equal to the one in getOne, in order to update it
-        if(result.id === getOneItem.id) {
+        if(getOneItem && result.id === getOneItem.id) {
           getOneItem = R.merge(getOneItem, result);
         }
         // Get array with all results
@@ -382,7 +385,7 @@ const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) =
         return state.merge({ upgrade: { fetching: false, success: true }, get: { results }, getOne: { result: getOneItem } }, d)
       },
       [Types.updateFailure]: (state, { error }) => state.merge({ upgrade: { fetching: false, error }}, d),
-      [Types.updateReset]: state => state.merge({ upgrade: { success: false, error: null, pending: null }, getOne: { result: null, id: null }}, d),
+      [Types.updateReset]: state => state.merge({ upgrade: { success: false, error: null }}, d),
     })
   }
   if(remove) {
@@ -391,11 +394,21 @@ const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) =
       [Types.removeSuccess]: state => {
         let { results } = R.clone(state.get);
         const { pending } = state.remove;
+        
+        // Get getOne item
+        let getOneItem = R.clone(state.getOne.result);
+        let getOneId = state.getOne.id;
+        if(getOneItem && getOneItem.id === pending) {
+          // Reset getOne item
+          getOneItem = null;
+          getOneId = null;
+        }
+
         results = R.filter(item => item.id != pending, results);
-        return state.merge({ remove: { fetching: false, success: true }, get: { results }}, d)
+        return state.merge({ remove: { fetching: false, success: true }, get: { results }, getOne: { result: getOneItem, id: getOneId }}, d)
       },
       [Types.removeFailure]: (state, { error }) => state.merge({ remove: { fetching: false, error, pending: null }}, d),
-      [Types.removeReset]: state => state.merge({ remove: { success: false, error: null, pending: null }, getOne: { result: null, id: null }}, d),
+      [Types.removeReset]: state => state.merge({ remove: { success: false, error: null, pending: null }}, d),
     })
   }
   if(reset) {
@@ -414,7 +427,7 @@ const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) =
   @param {object} options - Capable of creating default action reducers (get, getOne, create, update, remove, reset)
   @return {object} A reducer object.
 */
-export const createReducer = (initialState, handlers, options) => {
+const createReducer = (initialState, handlers, options) => {
   // initial state is required
   if (R.isNil(initialState)) {
     throw new Error('initial state is required')
@@ -447,4 +460,11 @@ export const createReducer = (initialState, handlers, options) => {
     // execute the handler
     return handler(state, action)
   }
+}
+
+export default {
+  createActions,
+  createState, 
+  createReducer,
+  createTypes,
 }

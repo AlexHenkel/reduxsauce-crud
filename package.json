@@ -17,7 +17,8 @@
   "dependencies": {
     "ramda": "^0.24.1",
     "ramdasauce": "^2.0.0",
-    "redux": "^3.7.1"
+    "redux": "^3.7.1",
+    "seamless-immutable": "^7.1.2"
   },
   "devDependencies": {
     "ava": "^0.21.0",
