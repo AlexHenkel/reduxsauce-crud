@@ -45,7 +45,7 @@ const getDefaultState = (action, getOneInitial = null) => {
   @param {object} config - Configuration for default actions
   @return {object} - An immutable state with merged custom an default properties
 */
-const createState = (customState, defaultConfig = {}) => {
+export const createState = (customState, defaultConfig = {}) => {
   const defaultActionsObj = {};
   if(defaultConfig.get) {
     Object.assign(defaultActionsObj, { get: getDefaultState('get')})
@@ -76,7 +76,7 @@ const createState = (customState, defaultConfig = {}) => {
   @param {object} options - Optional. // See more at https://github.com/skellock/reduxsauce
   @return {object} A types object.
 */
-const createTypes = (types, options) => {
+export const createTypes = (types, options) => {
   if (R.isNil(types)) throw new Error('valid types are required')
 
   const { prefix = '' } = options || {}
@@ -269,7 +269,7 @@ const convertToCreators = (config, options = {}) => {
   @param {object} options - Optional. // See more at https://github.com/skellock/reduxsauce
   @return {object} An object with Action Types and Action Creators
 */
-const createActions = (config, options = {}) => {
+export const createActions = (config, options = {}) => {
   if (R.isNil(config)) {
     throw new Error('an object is required to setup types and creators')
   }
@@ -427,7 +427,7 @@ const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) =
   @param {object} options - Capable of creating default action reducers (get, getOne, create, update, remove, reset)
   @return {object} A reducer object.
 */
-const createReducer = (initialState, handlers, options) => {
+export const createReducer = (initialState, handlers, options) => {
   // initial state is required
   if (R.isNil(initialState)) {
     throw new Error('initial state is required')
