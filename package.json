@@ -2,8 +2,11 @@
   "name": "reduxsauce-polymer",
   "version": "1.0.0",
   "description": "Adapted from [reduxsauce](https://github.com/skellock/reduxsauce)",
-  "main": "reduxsauce-crud.js",
+  "main": "lib/reduxsauce-crud.js",
   "scripts": {
+    "build": "npm run clean && npm run build:js && webpack",
+    "build:js": "babel src/ -d lib/",
+    "clean": "rimraf lib",
     "test": "ava",
     "watch": "ava --watch"
   },
@@ -18,18 +21,25 @@
     "ramda": "^0.24.1",
     "ramdasauce": "^2.0.0",
     "redux": "^3.7.1",
+    "redux-observable-crud": "git+https://github.com/alexhenkel/redux-observable-crud.git",
+    "reduxsauce-polymer": "git+https://github.com/alexhenkel/reduxsauce-crud.git",
     "seamless-immutable": "^7.1.2"
   },
   "devDependencies": {
     "ava": "^0.21.0",
     "babel-cli": "^6.24.0",
     "babel-eslint": "^7.2.1",
+    "babel-loader": "^7.1.2",
     "babel-plugin-external-helpers": "^6.18.0",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-preset-es2015": "^6.24.0",
-    "babel-preset-es2015-rollup": "^3.0.0",
+    "babel-plugin-transform-class-properties": "^0.2.1",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-replace-object-assign": "^0.2.1",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-stage-0": "^6.22.0",
+    "babel-register": "^6.26.0",
     "np": "^2.16.0",
+    "rimraf": "^2.6.1",
     "standard": "^10.0.1"
   },
   "ava": {
@@ -40,7 +50,7 @@
       "babelrc": false,
       "presets": [
         "stage-0",
-        "es2015"
+        "env"
       ]
     }
   }
