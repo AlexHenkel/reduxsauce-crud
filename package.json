@@ -2,18 +2,18 @@
   "name": "reduxsauce-polymer",
   "version": "1.0.0",
   "description": "Adapted from [reduxsauce](https://github.com/skellock/reduxsauce)",
-  "main": "reduxsauce-polymer.js",
+  "main": "reduxsauce-crud.js",
   "scripts": {
     "test": "ava",
     "watch": "ava --watch"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://henkel0@bitbucket.org/kinedu/reduxsauce-polymer.git"
+    "url": "https://github.com/AlexHenkel/reduxsauce-crud"
   },
   "author": "Alejandro Henkel <alehenkel17@gmail.com> (https://github.com/alexhenkel/)",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/kinedu/reduxsauce-polymer#readme",
+  "homepage": "https://github.com/AlexHenkel/reduxsauce-crud#readme",
   "dependencies": {
     "ramda": "^0.24.1",
     "ramdasauce": "^2.0.0",
