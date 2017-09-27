@@ -1,5 +1,5 @@
 {
-  "name": "reduxsauce-polymer",
+  "name": "reduxsauce-crud",
   "version": "1.0.0",
   "description": "Adapted from [reduxsauce](https://github.com/skellock/reduxsauce)",
   "main": "lib/reduxsauce-crud.js",
