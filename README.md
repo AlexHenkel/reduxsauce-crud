@@ -5,7 +5,7 @@ Adapted from [reduxsauce](https://github.com/skellock/reduxsauce)
 
 ## Usage
 
-`yarn add git+ssh://bitbucket.org/kinedu/reduxsauce-crud.git`
+`yarn add https://github.com/AlexHenkel/reduxsauce-crud.git`
 
 ## Overview
 
@@ -32,7 +32,7 @@ We assume that the following pattern is used to handle API request through redux
 
 As this is a very repetitive process, we intend to abstract the CRUD requests, as they will be used in the same way across the process. (And for special cases, there's always a way to create custom actions)
 
-**Note: This library is optimized to be used along [reduxobserver-crudsauce](https://bitbucket.org/kinedu/reduxobserver-crudsauce) to handle ansync requests with Redux**
+**Note: This library is optimized to be used along [redux-observable-crud](https://github.com/AlexHenkel/redux-observable-crud) to handle ansync requests with Redux**
 
 # createActions #
 Originally, this function has a second parameter **options**. So we made available a new default option called *defaultActions* to generate *CRUD* **ActionCreators** and **Types**
