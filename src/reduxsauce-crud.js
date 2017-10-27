@@ -6,7 +6,7 @@ const d = { deep: true }
 ////////////////////////////
 ///////  CREATE INITIAL STATE
 ////////////////////////////
-const getDefaultState = (action, getOneInitial = null) => {
+const getDefaultState = (action, getOneInitial = {}) => {
   switch(action) {
     case 'get':
       return {
@@ -311,7 +311,10 @@ const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) =
         return state.merge({ getOne }, d)
       },
       [Types.getOneFailure]: (state, { id, error }) => state.merge({ getOne: { fetching: false, id, error }}, d),
-      [Types.getOneReset]: state => state.merge({ getOne: { fetching: false, error: null, id: null, result: null }}, d),
+      [Types.getOneReset]: state => state.merge([
+        { getOne: { fetching: false, error: null, id: null, result: null }},
+        { getOne: { result: INITIAL_STATE.getOne.result }},
+      ], d),
       [Types.getOneCreateFrom]: (state, { newElement, property, customFilter = null}) => {
         // Get the complete object
         let { result } = R.clone(state.getOne);
@@ -360,7 +363,7 @@ const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) =
         return state.merge({ create: { fetching: false, success: true }, get: { results }}, d)
       },
       [Types.createFailure]: (state, { error }) => state.merge({ create: { fetching: false, error }}, d),
-      [Types.createReset]: state => state.merge({ create: { success: false, error: null }}, d),
+      [Types.createReset]: state => state.merge({ create: { fetching: false, success: false, error: null }}, d),
     })
   }
   if(update) {
@@ -385,7 +388,7 @@ const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) =
         return state.merge({ upgrade: { fetching: false, success: true }, get: { results }, getOne: { result: getOneItem } }, d)
       },
       [Types.updateFailure]: (state, { error }) => state.merge({ upgrade: { fetching: false, error }}, d),
-      [Types.updateReset]: state => state.merge({ upgrade: { success: false, error: null }}, d),
+      [Types.updateReset]: state => state.merge({ upgrade: { fetching: false, success: false, error: null }}, d),
     })
   }
   if(remove) {
@@ -408,7 +411,7 @@ const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) =
         return state.merge({ remove: { fetching: false, success: true }, get: { results }, getOne: { result: getOneItem, id: getOneId }}, d)
       },
       [Types.removeFailure]: (state, { error }) => state.merge({ remove: { fetching: false, error, pending: null }}, d),
-      [Types.removeReset]: state => state.merge({ remove: { success: false, error: null, pending: null }}, d),
+      [Types.removeReset]: state => state.merge({ remove: { fetching: false, success: false, error: null, pending: null }}, d),
     })
   }
   if(reset) {

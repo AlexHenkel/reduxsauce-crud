@@ -1,6 +1,6 @@
 import test from 'ava'
 import R from 'ramda'
-import reduxsauce from '../reduxsauce-polymer'
+import reduxsauce from '../src/reduxsauce-crud'
 
 const { createTypes } = reduxsauce;
 

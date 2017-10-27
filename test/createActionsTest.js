@@ -1,5 +1,5 @@
 import test from 'ava'
-import reduxsauce from '../reduxsauce-polymer'
+import reduxsauce from '../src/reduxsauce-crud'
 
 const { createActions } = reduxsauce;
 

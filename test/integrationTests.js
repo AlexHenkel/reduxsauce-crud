@@ -1,6 +1,6 @@
 import test from 'ava'
 import R from 'ramda'
-import reduxsauce from '../reduxsauce-polymer'
+import reduxsauce from '../src/reduxsauce-crud'
 import Immutable from 'seamless-immutable'
 
 const { createReducer, createState, createActions } = reduxsauce;

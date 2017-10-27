@@ -1,88 +1,15 @@
-module.exports =
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.createReducer = exports.createActions = exports.createTypes = exports.createState = undefined;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _ramda = __webpack_require__(1);
+var _ramda = require('ramda');
 
 var _ramda2 = _interopRequireDefault(_ramda);
 
-var _seamlessImmutable = __webpack_require__(2);
+var _seamlessImmutable = require('seamless-immutable');
 
 var _seamlessImmutable2 = _interopRequireDefault(_seamlessImmutable);
 
@@ -96,7 +23,7 @@ var d = { deep: true
   ///////  CREATE INITIAL STATE
   ////////////////////////////
 };var getDefaultState = function getDefaultState(action) {
-  var getOneInitial = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  var getOneInitial = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   switch (action) {
     case 'get':
@@ -141,19 +68,19 @@ var createState = exports.createState = function createState(customState) {
 
   var defaultActionsObj = {};
   if (defaultConfig.get) {
-    _extends(defaultActionsObj, { get: getDefaultState('get') });
+    Object.assign(defaultActionsObj, { get: getDefaultState('get') });
   }
   if (defaultConfig.getOne) {
-    _extends(defaultActionsObj, { getOne: getDefaultState('getOne', defaultConfig.getOneInitial) });
+    Object.assign(defaultActionsObj, { getOne: getDefaultState('getOne', defaultConfig.getOneInitial) });
   }
   if (defaultConfig.create) {
-    _extends(defaultActionsObj, { create: getDefaultState('create') });
+    Object.assign(defaultActionsObj, { create: getDefaultState('create') });
   }
   if (defaultConfig.update) {
-    _extends(defaultActionsObj, { upgrade: getDefaultState('update') });
+    Object.assign(defaultActionsObj, { upgrade: getDefaultState('update') });
   }
   if (defaultConfig.remove) {
-    _extends(defaultActionsObj, { remove: getDefaultState('remove') });
+    Object.assign(defaultActionsObj, { remove: getDefaultState('remove') });
   }
 
   return (0, _seamlessImmutable2.default)(_ramda2.default.merge(customState, defaultActionsObj));
@@ -206,24 +133,24 @@ var defaultTypes = function defaultTypes(_ref3) {
   var defaultTypesObj = {};
 
   if (defaultActions.get) {
-    _extends(defaultTypesObj, getDefaultCycle('get'));
+    Object.assign(defaultTypesObj, getDefaultCycle('get'));
   }
   if (defaultActions.getOne) {
-    var _extends2;
+    var _Object$assign;
 
-    _extends(defaultTypesObj, getDefaultCycle('getOne'), (_extends2 = {}, _defineProperty(_extends2, 'getOneCreateFrom', true), _defineProperty(_extends2, 'getOneUpdateFrom', true), _defineProperty(_extends2, 'getOneRemoveFrom', true), _defineProperty(_extends2, 'getOneFromState', true), _extends2));
+    Object.assign(defaultTypesObj, getDefaultCycle('getOne'), (_Object$assign = {}, _defineProperty(_Object$assign, 'getOneCreateFrom', true), _defineProperty(_Object$assign, 'getOneUpdateFrom', true), _defineProperty(_Object$assign, 'getOneRemoveFrom', true), _defineProperty(_Object$assign, 'getOneFromState', true), _Object$assign));
   }
   if (defaultActions.create) {
-    _extends(defaultTypesObj, getDefaultCycle('create'));
+    Object.assign(defaultTypesObj, getDefaultCycle('create'));
   }
   if (defaultActions.update) {
-    _extends(defaultTypesObj, getDefaultCycle('update'));
+    Object.assign(defaultTypesObj, getDefaultCycle('update'));
   }
   if (defaultActions.remove) {
-    _extends(defaultTypesObj, getDefaultCycle('remove'));
+    Object.assign(defaultTypesObj, getDefaultCycle('remove'));
   }
   if (defaultActions.reset) {
-    _extends(defaultTypesObj, { reset: true });
+    Object.assign(defaultTypesObj, { reset: true });
   }
 
   return defaultTypesObj;
@@ -299,7 +226,7 @@ var convertToCreators = function convertToCreators(config) {
 
 
     if (get) {
-      _extends(defaultActionsCreators, {
+      Object.assign(defaultActionsCreators, {
         getRequest: createActionCreator('getRequest', null, prefix),
         getSuccess: createActionCreator('getSuccess', ['results'], prefix),
         getFailure: createActionCreator('getFailure', ['error'], prefix),
@@ -308,7 +235,7 @@ var convertToCreators = function convertToCreators(config) {
     }
 
     if (getOne) {
-      _extends(defaultActionsCreators, {
+      Object.assign(defaultActionsCreators, {
         getOneRequest: createActionCreator('getOneRequest', ['id'], prefix),
         getOneSuccess: createActionCreator('getOneSuccess', ['id', 'result', 'noResolve'], prefix),
         getOneFailure: createActionCreator('getOneFailure', ['error'], prefix),
@@ -326,7 +253,7 @@ var convertToCreators = function convertToCreators(config) {
 
     // create is an array with required props
     if (create) {
-      _extends(defaultActionsCreators, {
+      Object.assign(defaultActionsCreators, {
         createRequest: createActionCreator('createRequest', ['data'], prefix),
         createSuccess: createActionCreator('createSuccess', ['result'], prefix),
         createFailure: createActionCreator('createFailure', ['error'], prefix),
@@ -336,7 +263,7 @@ var convertToCreators = function convertToCreators(config) {
 
     // update is an array with required props
     if (update) {
-      _extends(defaultActionsCreators, {
+      Object.assign(defaultActionsCreators, {
         updateRequest: createActionCreator('updateRequest', ['id', 'data'], prefix),
         updateSuccess: createActionCreator('updateSuccess', ['result'], prefix),
         updateFailure: createActionCreator('updateFailure', ['error'], prefix),
@@ -345,7 +272,7 @@ var convertToCreators = function convertToCreators(config) {
     }
 
     if (remove) {
-      _extends(defaultActionsCreators, {
+      Object.assign(defaultActionsCreators, {
         removeRequest: createActionCreator('removeRequest', ['id'], prefix),
         removeSuccess: createActionCreator('removeSuccess', ['id'], prefix),
         removeFailure: createActionCreator('removeFailure', ['error'], prefix),
@@ -354,7 +281,7 @@ var convertToCreators = function convertToCreators(config) {
     }
 
     if (reset) {
-      _extends(defaultActionsCreators, {
+      Object.assign(defaultActionsCreators, {
         reset: createActionCreator('reset', null, prefix)
       });
     }
@@ -401,26 +328,26 @@ var defaultActionsReducers = function defaultActionsReducers(INITIAL_STATE, _ref
   var defaultActionsObj = {};
 
   if (get) {
-    var _extends3;
+    var _Object$assign2;
 
-    _extends(defaultActionsObj, (_extends3 = {}, _defineProperty(_extends3, Types.getRequest, function (state) {
+    Object.assign(defaultActionsObj, (_Object$assign2 = {}, _defineProperty(_Object$assign2, Types.getRequest, function (state) {
       return state.merge({ get: { fetching: true } }, d);
-    }), _defineProperty(_extends3, Types.getSuccess, function (state, _ref5) {
+    }), _defineProperty(_Object$assign2, Types.getSuccess, function (state, _ref5) {
       var results = _ref5.results;
       return state.merge({ get: { fetching: false, error: null, results: results } }, d);
-    }), _defineProperty(_extends3, Types.getFailure, function (state, _ref6) {
+    }), _defineProperty(_Object$assign2, Types.getFailure, function (state, _ref6) {
       var error = _ref6.error;
       return state.merge({ get: { fetching: false, error: error } }, d);
-    }), _defineProperty(_extends3, Types.getReset, function (state) {
+    }), _defineProperty(_Object$assign2, Types.getReset, function (state) {
       return state.merge({ get: { fetching: false, error: null, results: [] } }, d);
-    }), _extends3));
+    }), _Object$assign2));
   }
   if (getOne) {
-    var _extends4;
+    var _Object$assign3;
 
-    _extends(defaultActionsObj, (_extends4 = {}, _defineProperty(_extends4, Types.getOneRequest, function (state) {
+    Object.assign(defaultActionsObj, (_Object$assign3 = {}, _defineProperty(_Object$assign3, Types.getOneRequest, function (state) {
       return state.merge({ getOne: { fetching: true } }, d);
-    }), _defineProperty(_extends4, Types.getOneSuccess, function (state, _ref7) {
+    }), _defineProperty(_Object$assign3, Types.getOneSuccess, function (state, _ref7) {
       var id = _ref7.id,
           result = _ref7.result,
           noResolve = _ref7.noResolve;
@@ -434,13 +361,13 @@ var defaultActionsReducers = function defaultActionsReducers(INITIAL_STATE, _ref
         getOne.id = id;
       }
       return state.merge({ getOne: getOne }, d);
-    }), _defineProperty(_extends4, Types.getOneFailure, function (state, _ref8) {
+    }), _defineProperty(_Object$assign3, Types.getOneFailure, function (state, _ref8) {
       var id = _ref8.id,
           error = _ref8.error;
       return state.merge({ getOne: { fetching: false, id: id, error: error } }, d);
-    }), _defineProperty(_extends4, Types.getOneReset, function (state) {
-      return state.merge({ getOne: { fetching: false, error: null, id: null, result: null } }, d);
-    }), _defineProperty(_extends4, Types.getOneCreateFrom, function (state, _ref9) {
+    }), _defineProperty(_Object$assign3, Types.getOneReset, function (state) {
+      return state.merge([{ getOne: { fetching: false, error: null, id: null, result: null } }, { getOne: { result: INITIAL_STATE.getOne.result } }], d);
+    }), _defineProperty(_Object$assign3, Types.getOneCreateFrom, function (state, _ref9) {
       var newElement = _ref9.newElement,
           property = _ref9.property,
           _ref9$customFilter = _ref9.customFilter,
@@ -457,7 +384,7 @@ var defaultActionsReducers = function defaultActionsReducers(INITIAL_STATE, _ref
       result[property].push(newElement);
       // Update the complete object
       return state.merge({ getOne: { result: result } }, d);
-    }), _defineProperty(_extends4, Types.getOneUpdateFrom, function (state, _ref10) {
+    }), _defineProperty(_Object$assign3, Types.getOneUpdateFrom, function (state, _ref10) {
       var newElement = _ref10.newElement,
           property = _ref10.property;
 
@@ -476,7 +403,7 @@ var defaultActionsReducers = function defaultActionsReducers(INITIAL_STATE, _ref
       result[property][index] = _ramda2.default.merge(result[property][index], newElement);
       // Update the complete object
       return state.merge({ getOne: { result: result } }, d);
-    }), _defineProperty(_extends4, Types.getOneRemoveFrom, function (state, _ref11) {
+    }), _defineProperty(_Object$assign3, Types.getOneRemoveFrom, function (state, _ref11) {
       var id = _ref11.id,
           property = _ref11.property;
 
@@ -495,14 +422,14 @@ var defaultActionsReducers = function defaultActionsReducers(INITIAL_STATE, _ref
       result[property] = currResults;
       // Update the complete object
       return state.merge({ getOne: { result: result } }, d);
-    }), _extends4));
+    }), _Object$assign3));
   }
   if (create) {
-    var _extends5;
+    var _Object$assign4;
 
-    _extends(defaultActionsObj, (_extends5 = {}, _defineProperty(_extends5, Types.createRequest, function (state) {
+    Object.assign(defaultActionsObj, (_Object$assign4 = {}, _defineProperty(_Object$assign4, Types.createRequest, function (state) {
       return state.merge({ create: { fetching: true } }, d);
-    }), _defineProperty(_extends5, Types.createSuccess, function (state, _ref12) {
+    }), _defineProperty(_Object$assign4, Types.createSuccess, function (state, _ref12) {
       var result = _ref12.result;
 
       // Add new element to get elements
@@ -511,19 +438,19 @@ var defaultActionsReducers = function defaultActionsReducers(INITIAL_STATE, _ref
 
       results.push(result);
       return state.merge({ create: { fetching: false, success: true }, get: { results: results } }, d);
-    }), _defineProperty(_extends5, Types.createFailure, function (state, _ref13) {
+    }), _defineProperty(_Object$assign4, Types.createFailure, function (state, _ref13) {
       var error = _ref13.error;
       return state.merge({ create: { fetching: false, error: error } }, d);
-    }), _defineProperty(_extends5, Types.createReset, function (state) {
-      return state.merge({ create: { success: false, error: null } }, d);
-    }), _extends5));
+    }), _defineProperty(_Object$assign4, Types.createReset, function (state) {
+      return state.merge({ create: { fetching: false, success: false, error: null } }, d);
+    }), _Object$assign4));
   }
   if (update) {
-    var _extends6;
+    var _Object$assign5;
 
-    _extends(defaultActionsObj, (_extends6 = {}, _defineProperty(_extends6, Types.updateRequest, function (state) {
+    Object.assign(defaultActionsObj, (_Object$assign5 = {}, _defineProperty(_Object$assign5, Types.updateRequest, function (state) {
       return state.merge({ upgrade: { fetching: true } }, d);
-    }), _defineProperty(_extends6, Types.updateSuccess, function (state, _ref14) {
+    }), _defineProperty(_Object$assign5, Types.updateSuccess, function (state, _ref14) {
       var result = _ref14.result;
 
       // Get getOne item
@@ -546,20 +473,20 @@ var defaultActionsReducers = function defaultActionsReducers(INITIAL_STATE, _ref
         results[index] = _ramda2.default.merge(results[index], result);
       }
       return state.merge({ upgrade: { fetching: false, success: true }, get: { results: results }, getOne: { result: getOneItem } }, d);
-    }), _defineProperty(_extends6, Types.updateFailure, function (state, _ref15) {
+    }), _defineProperty(_Object$assign5, Types.updateFailure, function (state, _ref15) {
       var error = _ref15.error;
       return state.merge({ upgrade: { fetching: false, error: error } }, d);
-    }), _defineProperty(_extends6, Types.updateReset, function (state) {
-      return state.merge({ upgrade: { success: false, error: null } }, d);
-    }), _extends6));
+    }), _defineProperty(_Object$assign5, Types.updateReset, function (state) {
+      return state.merge({ upgrade: { fetching: false, success: false, error: null } }, d);
+    }), _Object$assign5));
   }
   if (remove) {
-    var _extends7;
+    var _Object$assign6;
 
-    _extends(defaultActionsObj, (_extends7 = {}, _defineProperty(_extends7, Types.removeRequest, function (state, _ref16) {
+    Object.assign(defaultActionsObj, (_Object$assign6 = {}, _defineProperty(_Object$assign6, Types.removeRequest, function (state, _ref16) {
       var id = _ref16.id;
       return state.merge({ remove: { fetching: true, pending: id } }, d);
-    }), _defineProperty(_extends7, Types.removeSuccess, function (state) {
+    }), _defineProperty(_Object$assign6, Types.removeSuccess, function (state) {
       var _R$clone6 = _ramda2.default.clone(state.get),
           results = _R$clone6.results;
 
@@ -579,15 +506,15 @@ var defaultActionsReducers = function defaultActionsReducers(INITIAL_STATE, _ref
         return item.id != pending;
       }, results);
       return state.merge({ remove: { fetching: false, success: true }, get: { results: results }, getOne: { result: getOneItem, id: getOneId } }, d);
-    }), _defineProperty(_extends7, Types.removeFailure, function (state, _ref17) {
+    }), _defineProperty(_Object$assign6, Types.removeFailure, function (state, _ref17) {
       var error = _ref17.error;
       return state.merge({ remove: { fetching: false, error: error, pending: null } }, d);
-    }), _defineProperty(_extends7, Types.removeReset, function (state) {
-      return state.merge({ remove: { success: false, error: null, pending: null } }, d);
-    }), _extends7));
+    }), _defineProperty(_Object$assign6, Types.removeReset, function (state) {
+      return state.merge({ remove: { fetching: false, success: false, error: null, pending: null } }, d);
+    }), _Object$assign6));
   }
   if (reset) {
-    _extends(defaultActionsObj, _defineProperty({}, Types.reset, INITIAL_STATE));
+    Object.assign(defaultActionsObj, _defineProperty({}, Types.reset, INITIAL_STATE));
   }
 
   return defaultActionsObj;
@@ -644,18 +571,3 @@ exports.default = {
   createReducer: createReducer,
   createTypes: createTypes
 };
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-module.exports = require("ramda");
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-module.exports = require("seamless-immutable");
-
-/***/ })
-/******/ ]);
