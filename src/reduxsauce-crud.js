@@ -199,7 +199,7 @@ const convertToCreators = (config, options = {}) => {
 
     if(get) {
       Object.assign(defaultActionsCreators, {
-        getRequest: createActionCreator('getRequest', null, prefix),
+        getRequest: createActionCreator('getRequest', ['data'], prefix),
         getSuccess: createActionCreator('getSuccess', ['results'], prefix),
         getFailure: createActionCreator('getFailure', ['error'], prefix),
         getReset: createActionCreator('getReset', null, prefix),

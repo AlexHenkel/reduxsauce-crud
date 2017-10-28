@@ -68,7 +68,8 @@ const mapDispatchToProps = dispatch => ({
 The following action creators are available. *Only new methods are explained*
 
  - get:
-	 -  `getRequest()`
+	 -  `getRequest(data)`
+		 - `data`: Allows you to pass optional data to `get` API call
 	 - `getSuccess(results)`
 	 - `getFailure(error)`
 	 - `getReset()`
