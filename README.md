@@ -69,13 +69,14 @@ The following action creators are available. *Only new methods are explained*
 
  - get:
 	 -  `getRequest(data)`
-		 - `data`: Allows you to pass optional data to `get` API call
+		 - `data`: Allows you to pass optional data
 	 - `getSuccess(results)`
 	 - `getFailure(error)`
 	 - `getReset()`
 - getOne:
-	 -  `getOneRequest(id)`
+	 -  `getOneRequest(id, data)`
 		 - `id`: Specific Id to be fetched from API
+		 - `data`: Allows you to pass optional data
 	 - `getOneSuccess(id, result, noResolve)`
 		 - `result`: This is assumed to be an object
 		 - `noResolve`: When true, prevents `fetching` flag to be set to false
@@ -93,18 +94,21 @@ The following action creators are available. *Only new methods are explained*
 		 - `newElement`: The element to append
 		 - `property`: The key of `getOne.result` where the `newElement` belongs
 			 - `customFilter(result, newElement)`: It compares `getOne.result` and `newElement` and return true if they are related, therefore, `newElement` added.
+	 - `getOneFromState(id, path)`: Allows you to select an object from any path in the state. This intends to "save" an innecesary API call
+		 - `id`: Specific Id to be looked at
+		 - `path`: Path in state of the data we are going to extract for
  - create:
-	 -  `createRequest()`
+	 -  `createRequest(data)`
 	 - `createSuccess(result)`: Append the new element to `get.result`
 	 - `createFailure(error)`
 	 - `createReset()`
  - update:
-	 -  `updateRequest()`
+	 -  `updateRequest(id, data)`
 	 - `updateSuccess(result)`: Try to find the element in `get.results` and `getOne.result` to update those as well.
 	 - `updateFailure(error)`
 	 - `updateReset()`
  - remove:
-	 -  `removeRequest()`
+	 -  `removeRequest(id, data)`
 	 - `removeSuccess(result)`: Try to find the element in `get.results` and `getOne.result` to remove them as well.
 	 - `removeFailure(error)`
 	 - `removeReset()`

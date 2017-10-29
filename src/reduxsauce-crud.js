@@ -208,7 +208,7 @@ const convertToCreators = (config, options = {}) => {
     
     if(getOne) {
       Object.assign(defaultActionsCreators, {
-        getOneRequest: createActionCreator('getOneRequest', ['id'], prefix),
+        getOneRequest: createActionCreator('getOneRequest', ['id', 'data'], prefix),
         getOneSuccess: createActionCreator('getOneSuccess', ['id', 'result', 'noResolve'], prefix),
         getOneFailure: createActionCreator('getOneFailure', ['error'], prefix),
         getOneReset: createActionCreator('getOneReset', null, prefix),
@@ -245,7 +245,7 @@ const convertToCreators = (config, options = {}) => {
 
     if(remove) {
       Object.assign(defaultActionsCreators, {
-        removeRequest: createActionCreator('removeRequest', ['id'], prefix),
+        removeRequest: createActionCreator('removeRequest', ['id', 'data'], prefix),
         removeSuccess: createActionCreator('removeSuccess', ['id'], prefix),
         removeFailure: createActionCreator('removeFailure', ['error'], prefix),
         removeReset: createActionCreator('removeReset', null, prefix),
