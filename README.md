@@ -68,15 +68,17 @@ const mapDispatchToProps = dispatch => ({
 The following action creators are available. *Only new methods are explained*
 
  - get:
-	 -  `getRequest(data)`
+	 -  `getRequest(data, force)`
 		 - `data`: Allows you to pass optional data
+		 - `force`: Force an API call, since the default behavior is to look for local data
 	 - `getSuccess(results)`
 	 - `getFailure(error)`
 	 - `getReset()`
 - getOne:
-	 -  `getOneRequest(id, data)`
+	 -  `getOneRequest(id, data, force)`
 		 - `id`: Specific Id to be fetched from API
 		 - `data`: Allows you to pass optional data
+		 - `force`: Force an API call, since the default behavior is to look for local data
 	 - `getOneSuccess(id, result, noResolve)`
 		 - `result`: This is assumed to be an object
 		 - `noResolve`: When true, prevents `fetching` flag to be set to false

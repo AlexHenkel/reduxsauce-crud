@@ -227,7 +227,7 @@ var convertToCreators = function convertToCreators(config) {
 
     if (get) {
       Object.assign(defaultActionsCreators, {
-        getRequest: createActionCreator('getRequest', ['data'], prefix),
+        getRequest: createActionCreator('getRequest', ['data', 'force'], prefix),
         getSuccess: createActionCreator('getSuccess', ['results'], prefix),
         getFailure: createActionCreator('getFailure', ['error'], prefix),
         getReset: createActionCreator('getReset', null, prefix)
@@ -236,7 +236,7 @@ var convertToCreators = function convertToCreators(config) {
 
     if (getOne) {
       Object.assign(defaultActionsCreators, {
-        getOneRequest: createActionCreator('getOneRequest', ['id', 'data'], prefix),
+        getOneRequest: createActionCreator('getOneRequest', ['id', 'data', 'force'], prefix),
         getOneSuccess: createActionCreator('getOneSuccess', ['id', 'result', 'noResolve'], prefix),
         getOneFailure: createActionCreator('getOneFailure', ['error'], prefix),
         getOneReset: createActionCreator('getOneReset', null, prefix),
