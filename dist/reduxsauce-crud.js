@@ -380,8 +380,13 @@ var defaultActionsReducers = function defaultActionsReducers(INITIAL_STATE, _ref
 
 
       if (!result || customFilter && !customFilter(result, newElement)) return state;
-      // Add new element to desired property array
-      result[property].push(newElement);
+      if (property) {
+        // Add new element to desired property array
+        result[property].push(newElement);
+      } else {
+        // If property is set to null, just replace result with newElement
+        result = newElement;
+      }
       // Update the complete object
       return state.merge({ getOne: { result: result } }, d);
     }), _defineProperty(_Object$assign3, Types.getOneUpdateFrom, function (state, _ref10) {
@@ -395,12 +400,18 @@ var defaultActionsReducers = function defaultActionsReducers(INITIAL_STATE, _ref
 
 
       if (!result) return state;
-      // Get updated index on the desired property array
-      var index = _ramda2.default.findIndex(_ramda2.default.propEq('id', newElement.id))(result[property]);
-      // Return if it's not in current object
-      if (index === -1) return state;
-      // Modify updated index with new info
-      result[property][index] = _ramda2.default.merge(result[property][index], newElement);
+      // Verify if property exists, so we can look for it
+      if (property) {
+        // Get updated index on the desired property array
+        var index = _ramda2.default.findIndex(_ramda2.default.propEq('id', newElement.id))(result[property]);
+        // Return if it's not in current object
+        if (index === -1) return state;
+        // Modify updated index with new info
+        result[property][index] = _ramda2.default.merge(result[property][index], newElement);
+      } else {
+        // Since property is set to null, just replace result with newElement
+        result = newElement;
+      }
       // Update the complete object
       return state.merge({ getOne: { result: result } }, d);
     }), _defineProperty(_Object$assign3, Types.getOneRemoveFrom, function (state, _ref11) {

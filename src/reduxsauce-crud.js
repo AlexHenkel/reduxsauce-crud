@@ -320,8 +320,13 @@ const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) =
         let { result } = R.clone(state.getOne);
         // Verify if result exists or if filter exists and if it fails
         if(!result || (customFilter && !customFilter(result, newElement))) return state;
-        // Add new element to desired property array
-        result[property].push(newElement);
+        if (property) {
+          // Add new element to desired property array
+          result[property].push(newElement);
+        } else {
+          // If property is set to null, just replace result with newElement
+          result = newElement;
+        }
         // Update the complete object
         return state.merge({ getOne: { result }}, d)
       },
@@ -330,12 +335,18 @@ const defaultActionsReducers = (INITIAL_STATE, { defaultActions = {}, Types }) =
         let { result } = R.clone(state.getOne);
         // Get out if it's not defined
         if(!result) return state;
-        // Get updated index on the desired property array
-        const index = R.findIndex(R.propEq('id', newElement.id))(result[property]);
-        // Return if it's not in current object
-        if(index === -1) return state;
-        // Modify updated index with new info
-        result[property][index] = R.merge(result[property][index], newElement);
+        // Verify if property exists, so we can look for it
+        if (property) {
+          // Get updated index on the desired property array
+          const index = R.findIndex(R.propEq('id', newElement.id))(result[property]);
+          // Return if it's not in current object
+          if (index === -1) return state;
+          // Modify updated index with new info
+          result[property][index] = R.merge(result[property][index], newElement);
+        } else {
+          // Since property is set to null, just replace result with newElement
+          result = newElement;
+        }
         // Update the complete object
         return state.merge({ getOne: { result }}, d)
       },
